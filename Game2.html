@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treasure of the Hidden Cave</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+      background: linear-gradient(135deg, rgb(249, 101, 123) ,#ff7e5f, #fdad70, #42cba0, #356fa8);
+      color: darkslateblue;
+    }
+
+    h1 {
+      margin-top: 40px;
+    }
+    #level {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+
+    .doors {
+      margin-top: 40px;
+    }
+
+    .door {
+      display: inline-block;
+      width: 120px;
+      height: 180px;
+      margin: 20px;
+      background-color: rgb(5, 157, 157);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      line-height: 180px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .door:hover {
+      transform: scale(1.1);
+    }
+    .door.open {
+      background-color: #222;
+      transform: rotateY(180deg);
+    }
+
+    .inside {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 20px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      background: gold;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🏴‍☠️ Treasure of the Hidden Cave</h1>
+    <p>Find the treasure before you lose all your lives!</p>
+
+  <button onclick="startGame()">Start Adventure</button>
+
+  <div id="level"></div>
+  <div id="lives"></div>
+
+  <div class="doors" id="doorsContainer"></div>
+  <div id="message"></div>
+
+  <script>
+    let level = 1;
+    let maxLevel = 5;
+    let treasureDoor;
+    let gameActive = false;
+    let lives = 3;
+
+    function startGame() {
+      level = 1;
+      lives = 3;
+      gameActive = true;
+      startLevel();
+    }
+
+    function startLevel() {
+      document.getElementById("level").innerText = "Level: " + level;
+      document.getElementById("lives").innerText = "Lives: " + "❤️".repeat(lives);
+      document.getElementById("message").innerText = "";
+
+      const doorsContainer = document.getElementById("doorsContainer");
+      doorsContainer.innerHTML = "";
+
+      let numberOfDoors = level + 2;
+      treasureDoor = Math.floor(Math.random() * numberOfDoors);
+
+      for (let i = 0; i < numberOfDoors; i++) {
+        let door = document.createElement("div");
+        door.className = "door";
+        door.innerText = "Door " + (i + 1);
+
+        door.onclick = function () {
+          if (!gameActive) return;
+          openDoor(door, i);
+        };
+
+        doorsContainer.appendChild(door);
+      }
+    }
+
+    function openDoor(doorElement, index) {
+      gameActive = false;
+      doorElement.classList.add("open");
+
+      let inside = document.createElement("div");
+      inside.className = "inside";
+
+      if (index === treasureDoor) {
+        inside.innerHTML = "💎";
+        doorElement.appendChild(inside);
+
+        document.getElementById("message").innerText =
+          "✨ Correct! Moving to next level...";
+
+        setTimeout(() => {
+          if (level === maxLevel) {
+            document.getElementById("message").innerText =
+              "🏆 You conquered the cave and found the legendary treasure!";
+            gameActive = false;
+          } else {
+            level++;
+            gameActive = true;
+            startLevel();
+          }
+        }, 1500);
+
+      } else {
+        inside.innerHTML = "💀";
+        doorElement.appendChild(inside);
+
+        lives--;
+        document.getElementById("lives").innerText = "Lives: " + "❤️".repeat(lives);
+
+        if (lives === 0) {
+          document.getElementById("message").innerText =
+            "💔 Game Over! You lost all your lives!";
+          gameActive = false;
+        } else {
+          document.getElementById("message").innerText =
+            "💀 Wrong door! Try again...";
+          setTimeout(() => {
+            gameActive = true;
+            startLevel();
+          }, 1500);
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
